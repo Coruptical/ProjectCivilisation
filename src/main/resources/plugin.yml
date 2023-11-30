@@ -9,3 +9,9 @@ commands:
     description: Used to reload the config of the plugin.
     aliases:
       - pcr
+  civfactionsadmin:
+    description: Used to manage factions under Project Civilisation.
+    aliases:
+      - cfa
+  civfactions:
+    description: Used to manage your own faction under Project Civilisation.

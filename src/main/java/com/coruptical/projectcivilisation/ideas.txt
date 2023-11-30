@@ -1,0 +1,19 @@
+faction model:
+
+- factionName
+- description
+- chunks -> fastchunk model, using fastlocation model
+- ownerUUID
+- factionID
+- memberUUIDS
+- power
+
+how to store these in sqlite database:
+
+description - store as string
+factionName - store as string
+ownerUUID - just store it as a string.
+factionID - store this as a short, which we need to find equivalent in sqlite.
+power - store this as an int
+memberUUIDS - store as a string, seperate with semi-colons.
+chunks - turn into bytes and store as a blob.

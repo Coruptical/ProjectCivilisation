@@ -1,10 +1,19 @@
 package com.coruptical.projectcivilisation;
 
+import com.coruptical.projectcivilisation.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashSet;
+
 public final class ProjectCivilisation extends JavaPlugin {
     private static ProjectCivilisation instance;
+
+    private HashSet<Short> factionIds = new HashSet<>();
+
+    public HashSet<Short> getFactionIds() {
+        return factionIds;
+    }
 
     public static ProjectCivilisation getInstance() {
         return instance;
@@ -16,7 +25,7 @@ public final class ProjectCivilisation extends JavaPlugin {
 
         saveDefaultConfig();
 
-
+        Utils.registerAll(this);
     }
 
     @Override

@@ -5,7 +5,7 @@
 # ---------------------------
 # --- PERMISSIONS ---
 
-# This is the node that controls the name of the admin permission for commands under this plugin.
+# This is the node that controls the name of the admin permission for all admin commands under this plugin.
 AdminPermission: 'projectcivilisation.admin'
 
 # This is the message that is sent to a commandSender if they don't have permission.
