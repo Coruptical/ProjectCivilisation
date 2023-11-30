@@ -4,3 +4,8 @@ main: com.coruptical.projectcivilisation.ProjectCivilisation
 api-version: '1.20'
 authors: [Coruptical]
 description: The core plugin of Project Civilisation.
+commands:
+  projectcivilisation_reload:
+    description: Used to reload the config of the plugin.
+    aliases:
+      - pcr

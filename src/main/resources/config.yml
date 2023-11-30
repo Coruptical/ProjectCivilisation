@@ -1,0 +1,18 @@
+# This config allows you to change certain values that control the Project Civilisation plugin
+# Some of these values cannot be too low or too high, and you will see this under each section.
+# DO NOT DELETE ANY KEYS/VALUES IN THIS CONFIG. ONLY CHANGE THEM.
+
+# ---------------------------
+# --- PERMISSIONS ---
+
+# This is the node that controls the name of the admin permission for commands under this plugin.
+AdminPermission: 'projectcivilisation.admin'
+
+# This is the message that is sent to a commandSender if they don't have permission.
+NoPermissionMessage: '&cYou do not have permission to use this command.'
+
+# ---------------------------
+# --- OTHER ---
+
+# This is the prefix that is sent before every message under this plugin.
+MessagePrefix: '&7[&bProject Civilisation&7] '
