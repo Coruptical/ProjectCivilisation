@@ -5,10 +5,7 @@ import com.coruptical.projectcivilisation.models.Faction;
 import com.coruptical.projectcivilisation.models.FastChunk;
 import com.coruptical.projectcivilisation.models.StoredChunk;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class FactionUtils {
     public static Faction formatFaction(String name,
@@ -30,21 +27,20 @@ public class FactionUtils {
         return faction;
     }
 
-    public static short generateFactionId(HashSet<Short> factionIds){
+    public static short generateFactionId(HashMap<Short, Faction> idsFactionsMap){
         short current = 0;
         while (true){
-            if (!factionIds.contains(current)){
+            if (!idsFactionsMap.containsKey(current)){
                 return current;
             }
             current++;
         }
     }
 
-    public static Faction createFaction(String name, String ownerUUID){
+    public static void createFaction(String name, String ownerUUID){
         // TODO: Add faction to local, eventually into database.
-        Faction faction = new Faction(name, "", new HashSet<FastChunk>(),
+        Faction faction = new Faction(name, "", new HashSet<>(),
                 ownerUUID, new ArrayList<String>(), 0,
-                generateFactionId(ProjectCivilisation.getInstance().getFactionIds()));
-        return null;
+                generateFactionId(ProjectCivilisation.getInstance().getIdsFactionsMap()));
     }
 }

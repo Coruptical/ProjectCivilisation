@@ -16,4 +16,4 @@ ownerUUID - just store it as a string.
 factionID - store this as a short, which we need to find equivalent in sqlite.
 power - store this as an int
 memberUUIDS - store as a string, seperate with semi-colons.
-chunks - turn into bytes and store as a blob.
+chunks - turn into byte array and store as a blob.

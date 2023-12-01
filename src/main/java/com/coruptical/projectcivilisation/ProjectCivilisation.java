@@ -1,18 +1,19 @@
 package com.coruptical.projectcivilisation;
 
+import com.coruptical.projectcivilisation.models.Faction;
 import com.coruptical.projectcivilisation.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashSet;
+import java.util.HashMap;
 
 public final class ProjectCivilisation extends JavaPlugin {
     private static ProjectCivilisation instance;
 
-    private HashSet<Short> factionIds = new HashSet<>();
+    private final HashMap<Short, Faction> idsFactionsMap = new HashMap<>();
 
-    public HashSet<Short> getFactionIds() {
-        return factionIds;
+    public HashMap<Short, Faction> getIdsFactionsMap() {
+        return idsFactionsMap;
     }
 
     public static ProjectCivilisation getInstance() {

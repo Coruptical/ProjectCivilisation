@@ -1,27 +1,27 @@
 package com.coruptical.projectcivilisation.models;
 
 public class StoredChunk {
-    private int x;
-    private int z;
+    private short x;
+    private short z;
 
-    public StoredChunk(int x, int z) {
+    public StoredChunk(short x, short z) {
         this.x = x;
         this.z = z;
     }
 
-    public int getX() {
+    public short getX() {
         return x;
     }
 
-    public void setX(int x) {
+    public void setX(short x) {
         this.x = x;
     }
 
-    public int getZ() {
+    public short getZ() {
         return z;
     }
 
-    public void setZ(int z) {
+    public void setZ(short z) {
         this.z = z;
     }
 }

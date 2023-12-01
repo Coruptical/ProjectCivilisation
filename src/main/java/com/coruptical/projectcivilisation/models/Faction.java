@@ -1,18 +1,18 @@
 package com.coruptical.projectcivilisation.models;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class Faction {
     private String name;
     private String description;
-    private HashSet<FastChunk> chunks;
+    private Set<FastChunk> chunks;
     private String ownerUUID;
-    private ArrayList<String> memberUUIDs;
+    private List<String> memberUUIDs;
     private long power;
     private short factionID;
 
-    public Faction(String name, String description, HashSet<FastChunk> chunks, String ownerUUID, ArrayList<String> memberUUIDs, long power, short factionID) {
+    public Faction(String name, String description, Set<FastChunk> chunks, String ownerUUID, List<String> memberUUIDs, long power, short factionID) {
         this.name = name;
         this.description = description;
         this.chunks = chunks;
@@ -38,11 +38,11 @@ public class Faction {
         this.description = description;
     }
 
-    public HashSet<FastChunk> getChunks() {
+    public Set<FastChunk> getChunks() {
         return chunks;
     }
 
-    public void setChunks(HashSet<FastChunk> chunks) {
+    public void setChunks(Set<FastChunk> chunks) {
         this.chunks = chunks;
     }
 
@@ -54,11 +54,11 @@ public class Faction {
         this.ownerUUID = ownerUUID;
     }
 
-    public ArrayList<String> getMemberUUIDs() {
+    public List<String> getMemberUUIDs() {
         return memberUUIDs;
     }
 
-    public void setMemberUUIDs(ArrayList<String> memberUUIDs) {
+    public void setMemberUUIDs(List<String> memberUUIDs) {
         this.memberUUIDs = memberUUIDs;
     }
 
