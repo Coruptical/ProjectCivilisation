@@ -3,6 +3,7 @@ package com.coruptical.projectcivilisation.utils;
 import com.coruptical.projectcivilisation.commands.AdminFactionCommand;
 import com.coruptical.projectcivilisation.commands.ReloadConfigCommand;
 import com.coruptical.projectcivilisation.commands.UserFactionsCommand;
+import com.coruptical.projectcivilisation.event.ChunkEnterListener;
 import com.coruptical.projectcivilisation.models.Faction;
 import com.coruptical.projectcivilisation.models.FastChunk;
 import com.coruptical.projectcivilisation.models.StoredChunk;
@@ -22,6 +23,7 @@ public class Utils {
 
     public static void registerAll(JavaPlugin plugin){
         // Register listeners
+        plugin.getServer().getPluginManager().registerEvents(new ChunkEnterListener(), plugin);
 
         // Register commands
         plugin.getCommand("projectcivilisation_reload").setExecutor( new ReloadConfigCommand() );

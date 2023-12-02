@@ -1,8 +1,11 @@
 package com.coruptical.projectcivilisation;
 
 import com.coruptical.projectcivilisation.models.Faction;
+import com.coruptical.projectcivilisation.models.FastChunk;
+import com.coruptical.projectcivilisation.utils.FactionUtils;
 import com.coruptical.projectcivilisation.utils.Utils;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
@@ -11,9 +14,24 @@ public final class ProjectCivilisation extends JavaPlugin {
     private static ProjectCivilisation instance;
 
     private final HashMap<Short, Faction> idsFactionsMap = new HashMap<>();
+    private final HashMap<String, Short> namesIdsMap = new HashMap<>();
+    private final HashMap<String, FastChunk> chunkIdMap = new HashMap<>();
+    private final HashMap<Player, FastChunk> playerLastChunkMap = new HashMap<>();
+
+    public HashMap<Player, FastChunk> getPlayerLastChunkMap() {
+        return playerLastChunkMap;
+    }
+
+    public HashMap<String, FastChunk> getChunkIdMap() {
+        return chunkIdMap;
+    }
 
     public HashMap<Short, Faction> getIdsFactionsMap() {
         return idsFactionsMap;
+    }
+
+    public HashMap<String, Short> getNamesIdsMap() {
+        return namesIdsMap;
     }
 
     public static ProjectCivilisation getInstance() {
@@ -26,7 +44,11 @@ public final class ProjectCivilisation extends JavaPlugin {
 
         saveDefaultConfig();
 
+        // Register utils
         Utils.registerAll(this);
+
+        // Instantiate faction utils
+        FactionUtils.getInstance().init(this);
     }
 
     @Override

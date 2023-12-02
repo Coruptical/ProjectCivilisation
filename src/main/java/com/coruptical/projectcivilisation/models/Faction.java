@@ -9,10 +9,10 @@ public class Faction {
     private Set<FastChunk> chunks;
     private String ownerUUID;
     private List<String> memberUUIDs;
-    private long power;
+    private int power;
     private short factionID;
 
-    public Faction(String name, String description, Set<FastChunk> chunks, String ownerUUID, List<String> memberUUIDs, long power, short factionID) {
+    public Faction(String name, String description, Set<FastChunk> chunks, String ownerUUID, List<String> memberUUIDs, int power, short factionID) {
         this.name = name;
         this.description = description;
         this.chunks = chunks;
@@ -62,11 +62,11 @@ public class Faction {
         this.memberUUIDs = memberUUIDs;
     }
 
-    public long getPower() {
+    public int getPower() {
         return power;
     }
 
-    public void setPower(long power) {
+    public void setPower(int power) {
         this.power = power;
     }
 
