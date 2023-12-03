@@ -21,6 +21,8 @@ public class SerializeHandler {
         try {
             ObjectInputStream ois = new ObjectInputStream(bais);
             Object obj = ois.readObject();
+            ois.close();
+
             return obj;
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);

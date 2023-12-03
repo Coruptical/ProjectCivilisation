@@ -61,6 +61,13 @@ public class ChunkEnterListener implements Listener {
             }
         }
 
+        long elapsed = System.nanoTime() - start;
+        totalTime += elapsed;
+        timesRan++;
+        if (timesRan % 100 == 0){
+            plugin.getLogger().info("Time taken to run " + timesRan + " chunkEnter methods: " + (double) totalTime/1000000 + "ms");
+            plugin.getLogger().info("Average time: " + (double) (totalTime/timesRan)/1000000 + "ms");
+        }
     }
 
 }
