@@ -38,6 +38,7 @@ public final class ProjectCivilisation extends JavaPlugin {
         return instance;
     }
 
+
     @Override
     public void onEnable() {
         instance = this;
