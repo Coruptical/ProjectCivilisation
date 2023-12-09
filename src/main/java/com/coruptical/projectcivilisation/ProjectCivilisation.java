@@ -2,6 +2,7 @@ package com.coruptical.projectcivilisation;
 
 import com.coruptical.projectcivilisation.models.Faction;
 import com.coruptical.projectcivilisation.models.FastChunk;
+import com.coruptical.projectcivilisation.utils.DatabaseHandler;
 import com.coruptical.projectcivilisation.utils.FactionUtils;
 import com.coruptical.projectcivilisation.utils.Utils;
 import org.bukkit.ChatColor;
@@ -45,11 +46,17 @@ public final class ProjectCivilisation extends JavaPlugin {
 
         saveDefaultConfig();
 
+        // Generate empty data folder
+        Utils.createDataFolder(this);
+
         // Register utils
         Utils.registerAll(this);
 
         // Instantiate faction utils
         FactionUtils.getInstance().init(this);
+
+        // Instantiate database handler
+        DatabaseHandler.getInstance().init(this);
     }
 
     @Override
