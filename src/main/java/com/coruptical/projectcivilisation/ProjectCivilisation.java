@@ -62,7 +62,7 @@ public final class ProjectCivilisation extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
+        DatabaseHandler.getInstance().updateAllFactions();
     }
 
     public String getAdminPermission(){
