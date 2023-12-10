@@ -8,7 +8,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
 import java.util.logging.Level;
 
 public class DatabaseHandler {
@@ -40,17 +39,6 @@ public class DatabaseHandler {
                 plugin.getLogger().log(Level.SEVERE,
                         "File write error for database file.");
             }
-        }
-
-        try {
-            conn = DriverManager.getConnection("jdbc:sqlite:" + databaseFile);
-            plugin.getLogger().log(Level.WARNING, "Opened database connection.");
-
-            conn.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            plugin.getLogger().log(Level.SEVERE,
-                    "Error attempting to make a connection to database.");
         }
     }
 
@@ -93,7 +81,6 @@ public class DatabaseHandler {
      * "id:int,factionName:varchar(255),factionData:blob" and so on.
      */
     public String generateCreateTableSQL(String tableName, String values){
-        // TODO: Test if logic works in this.
         StringBuilder toStore = new StringBuilder();
 
         String[] variables = values.split(",");
@@ -105,17 +92,18 @@ public class DatabaseHandler {
             toStore.append(identifier).append(" ").append(type).append(", ");
         }
 
-        String createTableSQL = "CREATE TABLE IF NOT EXISTS " +
+        // We need to remove the last comma added otherwise we have SQL error.
+        toStore.deleteCharAt(toStore.lastIndexOf(","));
+
+        return "CREATE TABLE IF NOT EXISTS " +
                 tableName +
                 "( " +
                 toStore +
                 ");";
-
-        return createTableSQL;
     }
 
-    public void createGeneralTable(){
-        String tableSQL = generateCreateTableSQL("factions", "id:int,name:varchar(255),description:text,ownerUUID:text,power:int,memberUUIDs:text,chunks:blob");
+    public void createFactionsTable(){
+        String tableSQL = generateCreateTableSQL("factions", "id:int,name:text,description:text,ownerUUID:text,power:int,memberUUIDs:text,chunks:blob");
         try {
             Statement statement = conn.createStatement();
             statement.execute(tableSQL);
@@ -128,6 +116,10 @@ public class DatabaseHandler {
         }
     }
 
+    public void loadFactions(){
+        openConnection();
+        createFactionsTable();
 
+    }
 
 }

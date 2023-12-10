@@ -57,6 +57,7 @@ public final class ProjectCivilisation extends JavaPlugin {
 
         // Instantiate database handler
         DatabaseHandler.getInstance().init(this);
+        DatabaseHandler.getInstance().loadFactions();
     }
 
     @Override
