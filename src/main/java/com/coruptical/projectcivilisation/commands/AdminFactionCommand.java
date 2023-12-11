@@ -1,6 +1,7 @@
 package com.coruptical.projectcivilisation.commands;
 
 import com.coruptical.projectcivilisation.ProjectCivilisation;
+import com.coruptical.projectcivilisation.utils.CommandHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -21,8 +22,7 @@ public class AdminFactionCommand implements CommandExecutor, TabCompleter {
                 return true;
             }
 
-
-            
+            CommandHandler.handleAdminFactionCommand(p, strings);
         }
         return true;
     }
