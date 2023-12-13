@@ -10,6 +10,7 @@ import java.util.List;
 public class UserFactionsCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+
         return true;
     }
 

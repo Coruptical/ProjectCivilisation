@@ -4,6 +4,7 @@ import com.coruptical.projectcivilisation.ProjectCivilisation;
 import com.coruptical.projectcivilisation.models.Faction;
 import com.coruptical.projectcivilisation.models.FastChunk;
 import com.coruptical.projectcivilisation.models.StoredChunk;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +20,7 @@ public class DatabaseHandler {
     private static final String DB_NAME = "data";
     private File databaseFile = null;
     Connection conn = null;
+    private BukkitRunnable databaseUpdateRunnable;
 
     public static DatabaseHandler getInstance() {
         return instance;
@@ -103,6 +105,27 @@ public class DatabaseHandler {
                 "( " +
                 toStore +
                 ");";
+    }
+
+    public void startSavingUpdates(){
+        databaseUpdateRunnable = new BukkitRunnable() {
+            @Override
+            public void run() {
+                long start = System.nanoTime();
+                plugin.getLogger().log(Level.INFO, "Updating all factions into database...");
+
+                updateAllFactions();
+
+                long elapsed = System.nanoTime() - start;
+                plugin.getLogger().log(Level.INFO, "Updated factions into database in " + (double) elapsed/1000000 + "ms.");
+            }
+        };
+        databaseUpdateRunnable.runTaskTimer(plugin, 1L, plugin.getFactionUpdateIntervalInTicks());
+    }
+
+    public void stopSavingUpdates(){
+        databaseUpdateRunnable.cancel();
+        databaseUpdateRunnable = null;
     }
 
     public void createFactionsTable(){

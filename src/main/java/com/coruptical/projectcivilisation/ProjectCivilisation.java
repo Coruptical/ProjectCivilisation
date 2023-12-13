@@ -78,4 +78,25 @@ public final class ProjectCivilisation extends JavaPlugin {
         return ChatColor.translateAlternateColorCodes('&',
                 getConfig().getString("MessagePrefix"));
     }
+
+    public long getFactionUpdateIntervalInTicks(){
+        // Set the default interval to 10m (12,000 ticks)
+        long interval = 12000;
+        String configInterval = getConfig().getString("DatabaseSaveInterval");
+        String timeType = configInterval.substring(configInterval.length() - 1);
+
+        long timeTicks = 0;
+        if (timeType.equalsIgnoreCase("s")){
+            timeTicks = Long.parseLong(configInterval.replace("s", "")) * 20;
+        }else if(timeType.equalsIgnoreCase("m")){
+            timeTicks = Long.parseLong(configInterval.replace("m", "")) * 60 * 20;
+        }else if(timeType.equalsIgnoreCase("h")){
+            timeTicks = Long.parseLong(configInterval.replace("h", "")) * 60 * 60 * 20;
+        }
+
+        if(timeTicks > 0){
+            interval = timeTicks;
+        }
+        return interval;
+    }
 }

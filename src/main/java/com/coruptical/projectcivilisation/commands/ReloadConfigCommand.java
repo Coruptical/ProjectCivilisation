@@ -1,6 +1,7 @@
 package com.coruptical.projectcivilisation.commands;
 
 import com.coruptical.projectcivilisation.ProjectCivilisation;
+import com.coruptical.projectcivilisation.utils.DatabaseHandler;
 import com.coruptical.projectcivilisation.utils.Utils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -20,6 +21,11 @@ public class ReloadConfigCommand implements CommandExecutor {
             }
 
             plugin.reloadConfig();
+
+            // Restart updating of factions into database
+            DatabaseHandler.getInstance().stopSavingUpdates();
+            DatabaseHandler.getInstance().startSavingUpdates();
+
             if (commandSender instanceof Player){
                 Player p = (Player) commandSender;
                 Utils.msg(p, plugin.getPrefix() + "&aSuccessfully reloaded the config!");

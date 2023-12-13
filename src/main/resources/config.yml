@@ -12,6 +12,15 @@ AdminPermission: 'projectcivilisation.admin'
 NoPermissionMessage: '&cYou do not have permission to use this command.'
 
 # ---------------------------
+# --- FACTIONS ---
+
+# This node controls how often we update faction data into our database.
+# Can be given as "s", "m", or "h". E.g. "10s" or "20m".
+# If the server doesn't crash/restart often, this can be left as default (30m.)
+DatabaseSaveInterval: '30m'
+
+
+# ---------------------------
 # --- OTHER ---
 
 # This is the prefix that is sent before every message under this plugin.
