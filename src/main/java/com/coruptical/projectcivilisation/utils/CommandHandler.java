@@ -7,8 +7,17 @@ import org.bukkit.entity.Player;
 
 public class CommandHandler{
     private static final String adminCommandUsage = "/afactions <make/delete/list> <factionName?>";
+    private static final String adminEditCommandUsage = "/fedit <set-owner/set-power/set-description/set-name/add-member/remove-member/claim/radiusclaim/autoclaim> <factionName> <value>";
+    private static final String userFactionsCommandUsage = "/factions <claim/radius-claim/leave> <?radius>";
+    private static final String userFactionOwnerCommandUsage = "/factionsmanage <set-description/add-member/kick-member/promote/claim/radius-claim>";
+
+    public static void handleFactionsEditCommand(Player player, String[] args){
+        // TODO: Handle factions edit command
+    }
+
 
     public static void handleAdminFactionCommand(Player player, String[] args){
+        // TODO: Handle the rest of admin faction command (make/delete)
         final ProjectCivilisation plugin = ProjectCivilisation.getInstance();
 
         if (args.length == 0){
@@ -57,6 +66,31 @@ public class CommandHandler{
     }
 
     public static void handleFactionCommand(Player player, String[] args){
+        // TODO: Handle user faction command
+        String suuid = player.getUniqueId().toString();
 
+
+    }
+
+    public static void handleManageFactionCommand(Player p, String[] args){
+        // TODO: Handle faction owner manage command
+
+    }
+
+    public static boolean isFactionOwner(Player p){
+        ProjectCivilisation plugin = ProjectCivilisation.getInstance();
+
+        String playerUUID = p.getUniqueId().toString();
+        boolean ownerChecked = false;
+
+        for (short id : plugin.getIdsFactionsMap().keySet()){
+            Faction fac = plugin.getIdsFactionsMap().get(id);
+            if (fac.getOwnerUUID().equals(playerUUID)){
+                ownerChecked = true;
+                break;
+            }
+        }
+
+        return ownerChecked;
     }
 }
