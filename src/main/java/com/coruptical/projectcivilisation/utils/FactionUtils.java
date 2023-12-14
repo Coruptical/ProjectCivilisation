@@ -53,6 +53,16 @@ public class FactionUtils {
         }
     }
 
+    public static void removeFactionChunks(short id){
+        for (String chunkId : ProjectCivilisation.getInstance().getChunkIdMap().keySet()){
+            FastChunk c = ProjectCivilisation.getInstance().getChunkIdMap().get(chunkId);
+
+            if (c.getFactionID() == id){
+                ProjectCivilisation.getInstance().getChunkIdMap().remove(chunkId);
+            }
+        }
+    }
+
     public static void createFaction(String name, String ownerUUID){
         // TODO: Add faction into database.
         short id = generateFactionId(ProjectCivilisation.getInstance().getIdsFactionsMap());

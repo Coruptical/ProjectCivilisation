@@ -22,6 +22,8 @@ public class DatabaseHandler {
     Connection conn = null;
     private BukkitRunnable databaseUpdateRunnable;
 
+    private final String tableName = "factions";
+
     public static DatabaseHandler getInstance() {
         return instance;
     }
@@ -129,7 +131,7 @@ public class DatabaseHandler {
     }
 
     public void createFactionsTable(){
-        String tableSQL = generateCreateTableSQL("factions", "id:int,name:text,description:text,ownerUUID:text,power:int,memberUUIDs:text,chunks:blob");
+        String tableSQL = generateCreateTableSQL(tableName, "id:int,name:text,description:text,ownerUUID:text,power:int,memberUUIDs:text,chunks:blob");
         try {
             Statement statement = conn.createStatement();
             statement.execute(tableSQL);
@@ -142,12 +144,30 @@ public class DatabaseHandler {
         }
     }
 
+    public void removeFaction(Faction faction){
+        openConnection();
+
+        try {
+            PreparedStatement preparedStatement = conn.prepareStatement(
+                    "DELETE FROM factions WHERE id = ?"
+            );
+            preparedStatement.setShort(1, faction.getFactionID());
+
+            preparedStatement.executeUpdate();
+        }catch (SQLException e){
+            e.printStackTrace();
+            plugin.getLogger().log(Level.SEVERE, "Error occurred while removing faction from database.");
+        }
+
+        closeConnection();
+    }
+
     public void insertFaction(Faction faction){
         openConnection();
 
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(
-                    "INSERT INTO factions (id, name, description, ownerUUID, power, memberUUIDs, chunks) VALUES (?,?,?,?,?,?,?)"
+                    "INSERT INTO " + tableName + " (id, name, description, ownerUUID, power, memberUUIDs, chunks) VALUES (?,?,?,?,?,?,?)"
             );
             preparedStatement.setShort(1, faction.getFactionID());
             preparedStatement.setString(2, faction.getName());
@@ -171,7 +191,7 @@ public class DatabaseHandler {
         // id:int,name:text,description:text,ownerUUID:text,power:int,memberUUIDs:text,chunks:blob
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(
-                    "UPDATE factions SET name=?,description=?,ownerUUID=?,power=?,memberUUIDs=?,chunks=? WHERE id = ?"
+                    "UPDATE " + tableName + " SET name=?,description=?,ownerUUID=?,power=?,memberUUIDs=?,chunks=? WHERE id = ?"
             );
 
             preparedStatement.setShort(7, faction.getFactionID());
@@ -203,7 +223,7 @@ public class DatabaseHandler {
         createFactionsTable();
 
         try {
-            PreparedStatement preparedStatement = conn.prepareStatement("SELECT * from factions");
+            PreparedStatement preparedStatement = conn.prepareStatement("SELECT * from " + tableName);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()){

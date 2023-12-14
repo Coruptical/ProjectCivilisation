@@ -5,6 +5,9 @@ import com.coruptical.projectcivilisation.models.Faction;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+
 public class CommandHandler{
     private static final String adminCommandUsage = "/afactions <make/delete/list> <factionName?>";
     private static final String adminEditCommandUsage = "/fedit <set-owner/set-power/set-description/set-name/add-member/remove-member/claim/radiusclaim/autoclaim> <factionName> <value>";
@@ -19,9 +22,10 @@ public class CommandHandler{
     public static void handleAdminFactionCommand(Player player, String[] args){
         // TODO: Handle the rest of admin faction command (make/delete)
         final ProjectCivilisation plugin = ProjectCivilisation.getInstance();
+        final String incorrectUsageMsg = "&cIncorrect usage. &7" + adminCommandUsage;
 
         if (args.length == 0){
-            Utils.msg(player, "&cIncorrect usage. &7" + adminCommandUsage);
+            Utils.msg(player, incorrectUsageMsg);
             return;
         }
 
@@ -31,7 +35,6 @@ public class CommandHandler{
                 return;
             }
 
-            // TODO: Format message to send to player when they want to list the factions.
             for (short factionID : plugin.getIdsFactionsMap().keySet()){
                 Faction fac = plugin.getIdsFactionsMap().get(factionID);
 
@@ -62,6 +65,49 @@ public class CommandHandler{
 
                 Utils.msg(player, msg);
             }
+            return;
+        }
+        // /afactions <make/delete/list> <factionName?>
+        String first = args[0];
+        String factionName = args[1];
+
+        if (factionName.isEmpty()){
+            Utils.msg(player, "&cYou must give a faction name.");
+        }
+
+        if (first.equalsIgnoreCase("make")){
+            if (plugin.getNamesIdsMap().containsKey(factionName)){
+                Utils.msg(player, "&7This faction already exists.");
+                return;
+            }
+
+            Faction fac = new Faction(factionName,
+                    "",
+                    new HashSet<>(),
+                    "",
+                    new ArrayList<>(),
+                    0,
+                    FactionUtils.generateFactionId(plugin.getIdsFactionsMap()));
+
+            plugin.getIdsFactionsMap().put(fac.getFactionID(), fac);
+            plugin.getNamesIdsMap().put(fac.getName(), fac.getFactionID());
+            DatabaseHandler.getInstance().insertFaction(fac);
+        }else if (first.equalsIgnoreCase("delete")){
+            if (!plugin.getNamesIdsMap().containsKey(factionName)){
+                Utils.msg(player, "&7This faction does not exist.");
+                return;
+            }
+
+            Faction fac = plugin.getIdsFactionsMap().get(plugin.getNamesIdsMap().get(factionName));
+            short id = fac.getFactionID();
+            // TODO: Remove faction from local and database.
+            plugin.getIdsFactionsMap().remove(id);
+            plugin.getNamesIdsMap().remove(factionName);
+            FactionUtils.removeFactionChunks(id);
+
+            DatabaseHandler.getInstance().removeFaction(fac);
+        }else{
+            Utils.msg(player, incorrectUsageMsg);
         }
     }
 

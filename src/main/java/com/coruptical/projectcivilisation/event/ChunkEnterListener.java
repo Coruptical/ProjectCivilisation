@@ -23,8 +23,8 @@ public class ChunkEnterListener implements Listener {
 
         Player p = e.getPlayer();
         Chunk playersChunk = p.getLocation().getChunk();
-        int chunkX = playersChunk.getX();
-        int chunkZ = playersChunk.getZ();
+        short chunkX = (short) playersChunk.getX();
+        short chunkZ = (short) playersChunk.getZ();
         String currentChunkID = chunkX + ";" + chunkZ;
 
         if (!plugin.getPlayerLastChunkMap().containsKey(p)) {
