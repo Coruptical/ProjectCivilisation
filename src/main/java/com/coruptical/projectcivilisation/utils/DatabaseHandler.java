@@ -144,14 +144,14 @@ public class DatabaseHandler {
         }
     }
 
-    public void removeFaction(Faction faction){
+    public void removeFaction(short factionId){
         openConnection();
 
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(
                     "DELETE FROM factions WHERE id = ?"
             );
-            preparedStatement.setShort(1, faction.getFactionID());
+            preparedStatement.setShort(1, factionId);
 
             preparedStatement.executeUpdate();
         }catch (SQLException e){
@@ -228,13 +228,13 @@ public class DatabaseHandler {
 
             while (resultSet.next()){
                 // Take the result set data from each row and make a new faction in memory.
-                short id = resultSet.getShort(0);
-                String name = resultSet.getString(1);
-                String description = resultSet.getString(2);
-                String ownerUUID = resultSet.getString(3);
-                int power = resultSet.getInt(4);
-                String memberUUIDString = resultSet.getString(5);
-                byte[] chunkDataBytes = resultSet.getBytes(6);
+                short id = resultSet.getShort(1);
+                String name = resultSet.getString(2);
+                String description = resultSet.getString(3);
+                String ownerUUID = resultSet.getString(4);
+                int power = resultSet.getInt(5);
+                String memberUUIDString = resultSet.getString(6);
+                byte[] chunkDataBytes = resultSet.getBytes(7);
 
                 List<String> memberUUIDs = Arrays.asList(memberUUIDString.split(","));
                 Faction faction = new Faction(name,
@@ -245,18 +245,9 @@ public class DatabaseHandler {
                         power,
                         id);
 
-                // Put this into our ids and factions hashmap so we can use it.
-                plugin.getIdsFactionsMap().put(id, faction);
-                plugin.getNamesIdsMap().put(name, id);
+                FactionUtils.addFaction(faction);
             }
             preparedStatement.close();
-
-            for (short factionID: plugin.getIdsFactionsMap().keySet()){
-                Faction faction = plugin.getIdsFactionsMap().get(factionID);
-                for (FastChunk c : faction.getChunks()){
-                    plugin.getChunkIdMap().put(c.getId(), c);
-                }
-            }
 
         } catch (SQLException e) {
             e.printStackTrace();

@@ -20,7 +20,6 @@ public class CommandHandler{
 
 
     public static void handleAdminFactionCommand(Player player, String[] args){
-        // TODO: Handle the rest of admin faction command (make/delete)
         final ProjectCivilisation plugin = ProjectCivilisation.getInstance();
         final String incorrectUsageMsg = "&cIncorrect usage. &7" + adminCommandUsage;
 
@@ -76,36 +75,20 @@ public class CommandHandler{
         }
 
         if (first.equalsIgnoreCase("make")){
-            if (plugin.getNamesIdsMap().containsKey(factionName)){
+            if (FactionUtils.containsFaction(factionName)){
                 Utils.msg(player, "&7This faction already exists.");
                 return;
             }
-
-            Faction fac = new Faction(factionName,
-                    "",
-                    new HashSet<>(),
-                    "",
-                    new ArrayList<>(),
-                    0,
-                    FactionUtils.generateFactionId(plugin.getIdsFactionsMap()));
-
-            plugin.getIdsFactionsMap().put(fac.getFactionID(), fac);
-            plugin.getNamesIdsMap().put(fac.getName(), fac.getFactionID());
-            DatabaseHandler.getInstance().insertFaction(fac);
+            FactionUtils.createFaction(factionName);
         }else if (first.equalsIgnoreCase("delete")){
-            if (!plugin.getNamesIdsMap().containsKey(factionName)){
+            if (!FactionUtils.containsFaction(factionName)){
                 Utils.msg(player, "&7This faction does not exist.");
                 return;
             }
 
             Faction fac = plugin.getIdsFactionsMap().get(plugin.getNamesIdsMap().get(factionName));
             short id = fac.getFactionID();
-            // TODO: Remove faction from local and database.
-            plugin.getIdsFactionsMap().remove(id);
-            plugin.getNamesIdsMap().remove(factionName);
-            FactionUtils.removeFactionChunks(id);
-
-            DatabaseHandler.getInstance().removeFaction(fac);
+            FactionUtils.deleteFaction(id, fac.getName());
         }else{
             Utils.msg(player, incorrectUsageMsg);
         }
