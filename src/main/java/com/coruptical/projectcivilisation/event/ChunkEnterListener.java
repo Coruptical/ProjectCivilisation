@@ -38,11 +38,11 @@ public class ChunkEnterListener implements Listener {
         }
 
         FastChunk lastChunk = plugin.getPlayerLastChunkMap().get(p);
-        short lastChunkFactionID = lastChunk.getFactionID();
-        String lastFaction = FactionUtils.getNameFromID(lastChunkFactionID);
 
         if (!lastChunk.getId().equalsIgnoreCase(currentChunkID)){
             if (plugin.getChunkIdMap().containsKey(currentChunkID)){
+                short lastChunkFactionID = lastChunk.getFactionID();
+                String lastFaction = FactionUtils.getNameFromID(lastChunkFactionID);
                 FastChunk currentChunk = plugin.getChunkIdMap().get(currentChunkID);
                 if (!(currentChunk.getFactionID() == lastChunkFactionID)){
                     Utils.msg(p, "&6Entering " + FactionUtils.getNameFromID(

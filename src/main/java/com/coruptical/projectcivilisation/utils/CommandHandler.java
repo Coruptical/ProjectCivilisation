@@ -52,7 +52,10 @@ public class CommandHandler{
                         }
                     }
                 }
-                memberBuilder.deleteCharAt(memberBuilder.lastIndexOf(","));
+
+                if (memberBuilder.length() > 0){
+                    memberBuilder.deleteCharAt(memberBuilder.lastIndexOf(","));
+                }
 
                 String msg = factionID + ":\n" +
                         "&bName: &f" + fac.getName() + "\n"

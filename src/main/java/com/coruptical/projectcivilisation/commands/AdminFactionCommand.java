@@ -17,12 +17,16 @@ public class AdminFactionCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (commandSender instanceof Player){
             Player p = (Player) commandSender;
+
+            long start = System.nanoTime();
             if (!p.hasPermission(plugin.getAdminPermission())){
                 p.sendMessage(plugin.getNoPermissionMessage());
                 return true;
             }
 
             CommandHandler.handleAdminFactionCommand(p, strings);
+            long elapsed = System.nanoTime() - start;
+            p.sendMessage("Command runtime: " + (double) elapsed/1000000 + "ms.");
         }
         return true;
     }

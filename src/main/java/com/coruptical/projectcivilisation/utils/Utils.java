@@ -1,8 +1,6 @@
 package com.coruptical.projectcivilisation.utils;
 
-import com.coruptical.projectcivilisation.commands.AdminFactionCommand;
-import com.coruptical.projectcivilisation.commands.ReloadConfigCommand;
-import com.coruptical.projectcivilisation.commands.UserFactionsCommand;
+import com.coruptical.projectcivilisation.commands.*;
 import com.coruptical.projectcivilisation.event.ChunkEnterListener;
 import com.coruptical.projectcivilisation.models.FastChunk;
 import com.coruptical.projectcivilisation.models.StoredChunk;
@@ -28,12 +26,20 @@ public class Utils {
         plugin.getCommand("projectcivilisation_reload").setExecutor( new ReloadConfigCommand() );
 
         AdminFactionCommand adminFactionCommand = new AdminFactionCommand();
-        plugin.getCommand("civfactionsadmin").setExecutor(adminFactionCommand);
-        plugin.getCommand("civfactionsadmin").setTabCompleter(adminFactionCommand);
+        plugin.getCommand("afactions").setExecutor(adminFactionCommand);
+        plugin.getCommand("afactions").setTabCompleter(adminFactionCommand);
 
         UserFactionsCommand factionsCommand = new UserFactionsCommand();
-        plugin.getCommand("civfactions").setExecutor(factionsCommand);
-        plugin.getCommand("civfactions").setTabCompleter(factionsCommand);
+        plugin.getCommand("factions").setExecutor(factionsCommand);
+        plugin.getCommand("factions").setTabCompleter(factionsCommand);
+
+        FactionsManageCommand factionsManageCommand = new FactionsManageCommand();
+        plugin.getCommand("factionsmanage").setExecutor(factionsManageCommand);
+        plugin.getCommand("factionsmanage").setTabCompleter(factionsManageCommand);
+
+        FactionsEditCommand factionsEditCommand = new FactionsEditCommand();
+        plugin.getCommand("fedit").setExecutor(factionsEditCommand);
+        plugin.getCommand("fedit").setTabCompleter(factionsEditCommand);
     }
 
     public static Set<FastChunk> getChunksFromStored(short factionID, byte[] chunkByteArray){
@@ -63,7 +69,9 @@ public class Utils {
         for (String member : members){
             builder.append(member).append(",");
         }
-        builder.deleteCharAt(builder.lastIndexOf(","));
+        if (builder.length() > 0){ // Maybe we have no members, this causes an index error.
+            builder.deleteCharAt(builder.lastIndexOf(","));
+        }
 
         return builder.toString();
     }
