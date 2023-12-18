@@ -4,6 +4,9 @@ import com.coruptical.projectcivilisation.ProjectCivilisation;
 import com.coruptical.projectcivilisation.models.Faction;
 import com.coruptical.projectcivilisation.models.FastChunk;
 import com.coruptical.projectcivilisation.models.StoredChunk;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -13,6 +16,8 @@ public class FactionUtils {
     private ProjectCivilisation plugin;
 
     private static final FactionUtils instance = new FactionUtils();
+
+    private static String factionNoExistMsg = "";
 
     public static FactionUtils getInstance() {
         return instance;
@@ -24,6 +29,8 @@ public class FactionUtils {
 
     public void init(ProjectCivilisation plugin){
         this.plugin = plugin;
+
+        factionNoExistMsg = plugin.getPrefix() + "&cThis faction does not exist.";
     }
 
     public static Faction formatFaction(String name,
@@ -56,60 +63,111 @@ public class FactionUtils {
     }
 
     public static void setOwner(String factionName, String ownerName){
+        short id = instance.plugin.getNamesIdsMap().get(factionName);
+        Faction fac = instance.plugin.getIdsFactionsMap().get(id);
 
+        OfflinePlayer owner = Bukkit.getOfflinePlayer(ownerName);
+        String uuid = owner.getUniqueId().toString();
+        fac.setOwnerUUID(uuid);
     }
     public static void setDescription(String factionName, String description){
+        short id = instance.plugin.getNamesIdsMap().get(factionName);
+        Faction fac = instance.plugin.getIdsFactionsMap().get(id);
 
+        fac.setDescription(description);
     }
 
     public static void setPower(String factionName, int power){
-
+        short id = instance.plugin.getNamesIdsMap().get(factionName);
+        Faction fac = instance.plugin.getIdsFactionsMap().get(id);
     }
 
     public static void setName(String factionName, String newName){
+        short id = instance.plugin.getNamesIdsMap().get(factionName);
+        Faction fac = instance.plugin.getIdsFactionsMap().get(id);
 
+        fac.setName(newName);
     }
 
     public static void addMember(String factionName, String memberName){
+        short id = instance.plugin.getNamesIdsMap().get(factionName);
+        Faction fac = instance.plugin.getIdsFactionsMap().get(id);
 
+        OfflinePlayer member = Bukkit.getOfflinePlayer(memberName);
+        String uuid = member.getUniqueId().toString();
+        fac.getMemberUUIDs().add(uuid);
     }
 
     public static void removeMember(String factionName, String memberName){
+        short id = instance.plugin.getNamesIdsMap().get(factionName);
+        Faction fac = instance.plugin.getIdsFactionsMap().get(id);
 
+        OfflinePlayer member = Bukkit.getOfflinePlayer(memberName);
+        String uuid = member.getUniqueId().toString();
+        fac.getMemberUUIDs().remove(uuid);
     }
 
     public static void claim(Player p, String factionName){
+        int px = p.getLocation().getChunk().getX();
+        int pz = p.getLocation().getChunk().getZ();
 
+        if (!instance.plugin.getNamesIdsMap().containsKey(factionName)){
+            Utils.msg(p, factionNoExistMsg);
+            return;
+        }
+
+        short id = instance.plugin.getNamesIdsMap().get(factionName);
+        Faction fac = instance.plugin.getIdsFactionsMap().get(id);
+        short factionId = fac.getFactionID();
+
+        FastChunk c = new FastChunk((short) px, (short) pz, factionId);
+
+        fac.getChunks().add(c);
+        instance.plugin.getChunkIdMap().put(c.getId(), c);
     }
 
-    private static void claimInRadius(Player p, int radius){
+    private static void claimInRadius(String factionName, Player p, int radius){
+        int px = p.getLocation().getChunk().getX();
+        int pz = p.getLocation().getChunk().getZ();
+
+        if (!instance.plugin.getNamesIdsMap().containsKey(factionName)){
+            Utils.msg(p, factionNoExistMsg);
+            return;
+        }
+
+        short id = instance.plugin.getNamesIdsMap().get(factionName);
+        Faction fac = instance.plugin.getIdsFactionsMap().get(id);
+        short factionId = fac.getFactionID();
+
         for (int x = -radius; x <= -radius; x++){
             for (int z = -radius; z <= radius; z++){
-                continue;
+                FastChunk c = new FastChunk((short) (px+x), (short) (pz+z), factionId);
+                fac.getChunks().add(c);
+                instance.plugin.getChunkIdMap().put(c.getId(), c);
             }
         }
     }
 
-    public static void radiusClaim(boolean async, Player p, int radius){
+    public static void radiusClaim(boolean async, String factionName, Player p, int radius){
         if (async){
             BukkitRunnable bukkitRunnable = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    claimInRadius(p, radius);
+                    claimInRadius(factionName, p, radius);
                 }
             };
             bukkitRunnable.runTaskAsynchronously(instance.plugin);
         } else {
-            claimInRadius(p, radius);
+            claimInRadius(factionName, p, radius);
         }
     }
 
     public static void removeFactionChunks(short id){
         for (String chunkId : ProjectCivilisation.getInstance().getChunkIdMap().keySet()){
-            FastChunk c = ProjectCivilisation.getInstance().getChunkIdMap().get(chunkId);
+            FastChunk c = instance.plugin.getChunkIdMap().get(chunkId);
 
             if (c.getFactionID() == id){
-                ProjectCivilisation.getInstance().getChunkIdMap().remove(chunkId);
+                instance.plugin.getChunkIdMap().remove(chunkId);
             }
         }
     }

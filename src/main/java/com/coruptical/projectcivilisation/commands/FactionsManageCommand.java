@@ -1,5 +1,6 @@
 package com.coruptical.projectcivilisation.commands;
 
+import com.coruptical.projectcivilisation.ProjectCivilisation;
 import com.coruptical.projectcivilisation.utils.CommandHandler;
 import com.coruptical.projectcivilisation.utils.Utils;
 import org.bukkit.command.Command;
@@ -20,7 +21,7 @@ public class FactionsManageCommand implements CommandExecutor, TabCompleter {
 
         Player p = (Player) commandSender;
         if (!CommandHandler.isFactionOwner(p)){
-            Utils.msg(p, "&cYou must be the faction owner to execute this command.");
+            Utils.msg(p, ProjectCivilisation.getInstance().getPrefix() + "&cYou must be the faction owner to execute this command.");
             return true;
         }
 

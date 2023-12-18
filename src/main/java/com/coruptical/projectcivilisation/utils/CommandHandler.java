@@ -16,7 +16,7 @@ public class CommandHandler{
 
     public static void handleFactionsEditCommand(Player player, String[] args){
         final ProjectCivilisation plugin = ProjectCivilisation.getInstance();
-        final String incorrectUsageMsg = "&cIncorrect usage. &7" + adminEditCommandUsage;
+        final String incorrectUsageMsg = plugin.getPrefix() + "&cIncorrect usage. &7" + adminEditCommandUsage;
         // <set-owner/set-power/set-description/set-name/add-member/remove-member/claim/radiusclaim/autoclaim> <factionName> <value>
         if (args.length == 0){
             Utils.msg(player, incorrectUsageMsg);
@@ -32,26 +32,24 @@ public class CommandHandler{
             return;
         }
 
-        if (args.length > 2){
-            String arg1 = args[0];
-            String factionName = args[1];
-            String value = args[2];
+        String arg1 = args[0];
+        String factionName = args[1];
+        String value = args[2];
 
-            if (arg1.equalsIgnoreCase("set-owner")){
-                if (!FactionUtils.containsFaction(factionName)){
-                    Utils.msg(player, "&7This faction does not exist.");
-                    return;
-                }
-
-
+        if (arg1.equalsIgnoreCase("set-owner")){
+            if (!FactionUtils.containsFaction(factionName)){
+                Utils.msg(player, plugin.getPrefix() + "&7This faction does not exist.");
+                return;
             }
+
+
         }
     }
 
 
     public static void handleAdminFactionCommand(Player player, String[] args){
         final ProjectCivilisation plugin = ProjectCivilisation.getInstance();
-        final String incorrectUsageMsg = "&cIncorrect usage. &7" + adminCommandUsage;
+        final String incorrectUsageMsg = plugin.getPrefix() + "&cIncorrect usage. &7" + adminCommandUsage;
 
         if (args.length == 0){
             Utils.msg(player, incorrectUsageMsg);
@@ -60,7 +58,7 @@ public class CommandHandler{
 
         if (args.length == 1){
             if (!args[0].equalsIgnoreCase("list")){
-                Utils.msg(player, "&cIncorrect usage. &7" + adminCommandUsage);
+                Utils.msg(player, plugin.getPrefix() +  "&cIncorrect usage. &7" + adminCommandUsage);
                 return;
             }
 
@@ -104,18 +102,18 @@ public class CommandHandler{
         String factionName = args[1];
 
         if (factionName.isEmpty()){
-            Utils.msg(player, "&cYou must give a faction name.");
+            Utils.msg(player, plugin.getPrefix() + "&cYou must give a faction name.");
         }
 
         if (first.equalsIgnoreCase("make")){
             if (FactionUtils.containsFaction(factionName)){
-                Utils.msg(player, "&7This faction already exists.");
+                Utils.msg(player, plugin.getPrefix() + "&7This faction already exists.");
                 return;
             }
             FactionUtils.createFaction(factionName);
         }else if (first.equalsIgnoreCase("delete")){
             if (!FactionUtils.containsFaction(factionName)){
-                Utils.msg(player, "&7This faction does not exist.");
+                Utils.msg(player, plugin.getPrefix() + "&7This faction does not exist.");
                 return;
             }
 

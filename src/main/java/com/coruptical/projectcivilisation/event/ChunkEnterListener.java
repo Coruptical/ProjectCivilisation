@@ -45,16 +45,16 @@ public class ChunkEnterListener implements Listener {
                 String lastFaction = FactionUtils.getNameFromID(lastChunkFactionID);
                 FastChunk currentChunk = plugin.getChunkIdMap().get(currentChunkID);
                 if (!(currentChunk.getFactionID() == lastChunkFactionID)){
-                    Utils.msg(p, "&6Entering " + FactionUtils.getNameFromID(
+                    Utils.msg(p, plugin.getPrefix() + "&6Entering " + FactionUtils.getNameFromID(
                             currentChunk.getFactionID()) + "'s territory.");
 
-                    Utils.msg(p, "&7Description: " +
+                    Utils.msg(p, plugin.getPrefix() + "&7Description: " +
                             plugin.getIdsFactionsMap().get(currentChunk.getFactionID()).getDescription());
 
                     plugin.getPlayerLastChunkMap().replace(p, currentChunk);
                 }else{
                     if (lastFaction != null){
-                        Utils.msg(p, "&6Entering wilderness.");
+                        Utils.msg(p, plugin.getPrefix() + "&6Entering wilderness.");
                     }
                     plugin.getPlayerLastChunkMap().replace(p, new FastChunk(chunkX, chunkZ, (short) -1));
                 }
