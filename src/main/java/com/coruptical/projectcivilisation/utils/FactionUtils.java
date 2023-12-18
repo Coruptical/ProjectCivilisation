@@ -4,6 +4,8 @@ import com.coruptical.projectcivilisation.ProjectCivilisation;
 import com.coruptical.projectcivilisation.models.Faction;
 import com.coruptical.projectcivilisation.models.FastChunk;
 import com.coruptical.projectcivilisation.models.StoredChunk;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
@@ -50,6 +52,55 @@ public class FactionUtils {
                 return current;
             }
             current++;
+        }
+    }
+
+    public static void setOwner(String factionName, String ownerName){
+
+    }
+    public static void setDescription(String factionName, String description){
+
+    }
+
+    public static void setPower(String factionName, int power){
+
+    }
+
+    public static void setName(String factionName, String newName){
+
+    }
+
+    public static void addMember(String factionName, String memberName){
+
+    }
+
+    public static void removeMember(String factionName, String memberName){
+
+    }
+
+    public static void claim(Player p, String factionName){
+
+    }
+
+    private static void claimInRadius(Player p, int radius){
+        for (int x = -radius; x <= -radius; x++){
+            for (int z = -radius; z <= radius; z++){
+                continue;
+            }
+        }
+    }
+
+    public static void radiusClaim(boolean async, Player p, int radius){
+        if (async){
+            BukkitRunnable bukkitRunnable = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    claimInRadius(p, radius);
+                }
+            };
+            bukkitRunnable.runTaskAsynchronously(instance.plugin);
+        } else {
+            claimInRadius(p, radius);
         }
     }
 

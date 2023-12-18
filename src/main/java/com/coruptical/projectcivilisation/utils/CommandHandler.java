@@ -15,7 +15,37 @@ public class CommandHandler{
     private static final String userFactionOwnerCommandUsage = "/factionsmanage <set-description/add-member/kick-member/promote/claim/radius-claim>";
 
     public static void handleFactionsEditCommand(Player player, String[] args){
-        // TODO: Handle factions edit command
+        final ProjectCivilisation plugin = ProjectCivilisation.getInstance();
+        final String incorrectUsageMsg = "&cIncorrect usage. &7" + adminEditCommandUsage;
+        // <set-owner/set-power/set-description/set-name/add-member/remove-member/claim/radiusclaim/autoclaim> <factionName> <value>
+        if (args.length == 0){
+            Utils.msg(player, incorrectUsageMsg);
+            return;
+        }
+        if (args.length == 1){
+            Utils.msg(player, incorrectUsageMsg);
+            return;
+        }
+
+        if (args.length == 2){
+            Utils.msg(player, incorrectUsageMsg);
+            return;
+        }
+
+        if (args.length > 2){
+            String arg1 = args[0];
+            String factionName = args[1];
+            String value = args[2];
+
+            if (arg1.equalsIgnoreCase("set-owner")){
+                if (!FactionUtils.containsFaction(factionName)){
+                    Utils.msg(player, "&7This faction does not exist.");
+                    return;
+                }
+
+
+            }
+        }
     }
 
 
