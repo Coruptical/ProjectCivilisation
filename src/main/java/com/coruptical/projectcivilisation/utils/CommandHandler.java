@@ -42,7 +42,10 @@ public class CommandHandler{
                 return;
             }
 
-
+            if (!FactionUtils.playerExists(value)){
+                Utils.msg(player, plugin.getPrefix() + "&7This player does not exist.");
+                return;
+            }
         }
     }
 

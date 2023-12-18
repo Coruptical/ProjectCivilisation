@@ -62,6 +62,15 @@ public class FactionUtils {
         }
     }
 
+    public static boolean playerExists(String name){
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(name);
+
+        if (offlinePlayer.getPlayerProfile().getName() == null){
+            return false;
+        }
+        return true;
+    }
+
     public static void setOwner(String factionName, String ownerName){
         short id = instance.plugin.getNamesIdsMap().get(factionName);
         Faction fac = instance.plugin.getIdsFactionsMap().get(id);
