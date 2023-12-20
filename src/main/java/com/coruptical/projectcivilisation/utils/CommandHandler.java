@@ -2,17 +2,15 @@ package com.coruptical.projectcivilisation.utils;
 
 import com.coruptical.projectcivilisation.ProjectCivilisation;
 import com.coruptical.projectcivilisation.models.Faction;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.HashSet;
 
 public class CommandHandler{
     private static final String adminCommandUsage = "/afactions <make/delete/list> <factionName?>";
     private static final String adminEditCommandUsage = "/fedit <set-owner/set-power/set-description/set-name/add-member/remove-member/claim/radiusclaim/autoclaim> <factionName> <value>";
     private static final String userFactionsCommandUsage = "/factions <claim/radius-claim/leave> <?radius>";
-    private static final String userFactionOwnerCommandUsage = "/factionsmanage <set-description/add-member/kick-member/promote/claim/radius-claim>";
+    private static final String userFactionOwnerCommandUsage = "/factionsmanage <set-description/add-member/kick-member/promote/demote/claim/radius-claim>";
 
     public static void handleFactionsEditCommand(Player player, String[] args){
         final ProjectCivilisation plugin = ProjectCivilisation.getInstance();
@@ -36,16 +34,78 @@ public class CommandHandler{
         String factionName = args[1];
         String value = args[2];
 
-        if (arg1.equalsIgnoreCase("set-owner")){
-            if (!FactionUtils.containsFaction(factionName)){
-                Utils.msg(player, plugin.getPrefix() + "&7This faction does not exist.");
-                return;
-            }
+        // check if our faction exists
+        if (!FactionUtils.containsFaction(factionName)){
+            Utils.msg(player, plugin.getPrefix() + "&7This faction does not exist.");
+            return;
+        }
 
+        if (arg1.equalsIgnoreCase("set-owner")){
             if (!FactionUtils.playerExists(value)){
                 Utils.msg(player, plugin.getPrefix() + "&7This player does not exist.");
                 return;
             }
+
+            FactionUtils.setOwner(factionName, value);
+            Utils.msg(player, plugin.getPrefix() + "&aSuccessfully set owner to &f" + value);
+        } else if(arg1.equalsIgnoreCase("set-name")){
+            if (value.isEmpty()){
+                Utils.msg(player, plugin.getPrefix() + "&7The name of the faction must be at least of length 1.");
+                return;
+            }
+
+            FactionUtils.setName(factionName, value);
+            Utils.msg(player, plugin.getPrefix() + "&aSuccessfully set name to " + value);
+        } else if (arg1.equalsIgnoreCase("set-description")){
+            if (value.isEmpty()){
+                Utils.msg(player, plugin.getPrefix() + "&7The description of the faction must be at least of length 1.");
+                return;
+            }
+
+            FactionUtils.setDescription(factionName, value);
+            Utils.msg(player, plugin.getPrefix() + "&aSuccessfully set description to: &f" + value);
+        } else if (arg1.equalsIgnoreCase("set-power")) {
+            try {
+                int parsedPower = Integer.parseInt(value);
+                FactionUtils.setPower(factionName, parsedPower);
+                Utils.msg(player, plugin.getPrefix() + "&aSuccessfully set power to " + value);
+            } catch (NumberFormatException e){
+                Utils.msg(player, plugin.getPrefix() + "&7The power must be given as a number.");
+            }
+        } else if(arg1.equalsIgnoreCase("add-member")){
+            if (!FactionUtils.playerExists(value)){
+                Utils.msg(player, plugin.getPrefix() + "&7This player does not exist.");
+                return;
+            }
+
+            FactionUtils.addMember(factionName, value);
+            Utils.msg(player, plugin.getPrefix() + "&aSuccessfully added &f" + value + "&a as a member");
+        } else if(arg1.equalsIgnoreCase("remove-member")){
+            if (!FactionUtils.playerExists(value)){
+                Utils.msg(player, plugin.getPrefix() + "&7This player does not exist.");
+                return;
+            }
+
+            FactionUtils.removeMember(factionName, value);
+            Utils.msg(player, plugin.getPrefix() + "&aSuccessfully removed &f" + value + "&a as a member.");
+        } else if(arg1.equalsIgnoreCase("claim")){
+            FactionUtils.claim(player, factionName);
+            Utils.msg(player, plugin.getPrefix() + "&aSuccessfully claimed chunk at your location.");
+        } else if (arg1.equalsIgnoreCase("radiusclaim")){
+            try {
+                int radius = Integer.parseInt(value);
+                if (radius > plugin.getRadiusClaimLimit()){
+                    Utils.msg(player, plugin.getPrefix() + "&7This radius is larger than the radius-claim limit.");
+                    return;
+                }
+
+                int claimed = FactionUtils.radiusClaim(plugin.doAsyncRadiusClaiming(), factionName, player, radius);
+                Utils.msg(player, plugin.getPrefix() + "&aSuccessfully claimed &f" + claimed + "&a chunks.");
+            }catch (NumberFormatException e){
+                Utils.msg(player, plugin.getPrefix() + "&7The radius must be given as an integer.");
+            }
+        } else if (arg1.equalsIgnoreCase("autoclaim")){
+            Utils.msg(player, plugin.getPrefix() + "&cThis feature is a &5WIP&c and is not implemented yet.");
         }
     }
 
@@ -129,14 +189,79 @@ public class CommandHandler{
     }
 
     public static void handleFactionCommand(Player player, String[] args){
-        // TODO: Handle user faction command
-        String suuid = player.getUniqueId().toString();
+        final ProjectCivilisation plugin = ProjectCivilisation.getInstance();
+        final String incorrectUsageMsg = plugin.getPrefix() + "&cIncorrect usage. &7" + userFactionsCommandUsage;
 
+        String puuid = player.getUniqueId().toString();
 
+        if (args.length == 0){
+            Utils.msg(player, incorrectUsageMsg);
+            return;
+        }
+
+        Faction playersFaction = FactionUtils.getPlayersFaction(player);
+
+        if (playersFaction == null) {
+            Utils.msg(player, plugin.getPrefix() + "&7You are not in a faction.");
+            return;
+        }
+
+        if (args.length == 1) {
+            if (args[0].equalsIgnoreCase("leave")) {
+                if (playersFaction.getOwnerUUID().equals(puuid)) {
+                    Utils.msg(player, plugin.getPrefix() + "&7You cannot leave leave a faction you are owner of.");
+                    return;
+                }
+
+                playersFaction.getMemberUUIDs().remove(puuid);
+                Utils.msg(player, plugin.getPrefix() + "&aYou have successfully left &f" + playersFaction.getName());
+            } else if (args[0].equalsIgnoreCase("claim")) {
+                if (!player.hasPermission(plugin.getFactionAdminPermission())) {
+                    player.sendMessage(plugin.getNoPermissionMessage());
+                    return;
+                }
+                FactionUtils.claim(player, playersFaction.getName());
+                Utils.msg(player, plugin.getPrefix() + "&aSuccessfully claimed chunk at your location.");
+            } else {
+                Utils.msg(player, incorrectUsageMsg);
+            }
+        }else if (args.length == 2){
+            if (!args[0].equalsIgnoreCase("radiusclaim")){
+                Utils.msg(player, incorrectUsageMsg);
+                return;
+            }
+
+            try {
+                int radius = Integer.parseInt(args[1]);
+
+                if (radius < 1){
+                    Utils.msg(player, plugin.getPrefix() + "&7The radius must be greater than 0.");
+                    return;
+                }
+
+                if (radius > plugin.getRadiusClaimLimit()){
+                    Utils.msg(player, plugin.getPrefix() + "&7The radius given is larger than the limit &f(" + plugin.getRadiusClaimLimit() + "&f)");
+                    return;
+                }
+
+                int claimed = FactionUtils.radiusClaim(plugin.doAsyncRadiusClaiming(), playersFaction.getName(), player, radius);
+                Utils.msg(player, plugin.getPrefix() + "&aSuccessfully claimed &f" + claimed + "&a chunks.");
+            }catch (NumberFormatException e){
+                Utils.msg(player, plugin.getPrefix() + "&7You must give the radius as an number.");
+            }
+        }
     }
 
     public static void handleManageFactionCommand(Player p, String[] args){
-        // TODO: Handle faction owner manage command
+        final ProjectCivilisation plugin = ProjectCivilisation.getInstance();
+        final String incorrectUsageMsg = plugin.getPrefix() + "&cIncorrect usage. &7" + userFactionOwnerCommandUsage;
+
+        if (args.length == 0){
+            Utils.msg(p, incorrectUsageMsg);
+            return;
+        }
+        // <set-description/add-member/kick-member/promote/demote/claim/radius-claim>
+
 
     }
 

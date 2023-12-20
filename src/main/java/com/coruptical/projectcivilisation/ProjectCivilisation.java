@@ -69,6 +69,14 @@ public final class ProjectCivilisation extends JavaPlugin {
         return getConfig().getString("AdminPermission");
     }
 
+    public String getFactionOwnerPermission() {
+        return getConfig().getString("FactionOwnerPermission");
+    }
+
+    public String getFactionAdminPermission(){
+        return getConfig().getString("FactionAdminPermission");
+    }
+
     public String getNoPermissionMessage(){
         return ChatColor.translateAlternateColorCodes('&',
                 getConfig().getString("NoPermissionMessage"));
@@ -77,6 +85,22 @@ public final class ProjectCivilisation extends JavaPlugin {
     public String getPrefix(){
         return ChatColor.translateAlternateColorCodes('&',
                 getConfig().getString("MessagePrefix"));
+    }
+
+    public boolean doAsyncRadiusClaiming(){
+        return getConfig().getBoolean("DoAsyncRadiusClaiming");
+    }
+
+    public int getRadiusClaimLimit(){
+        int finalLimit = 100;
+
+        int limit = getConfig().getInt("ClaimingRadiusLimit");
+
+        if (limit > 0){
+            finalLimit = limit;
+        }
+
+        return finalLimit;
     }
 
     public long getFactionUpdateIntervalInTicks(){

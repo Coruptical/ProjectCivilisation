@@ -5,11 +5,11 @@ import com.coruptical.projectcivilisation.models.Faction;
 import com.coruptical.projectcivilisation.models.FastChunk;
 import com.coruptical.projectcivilisation.models.StoredChunk;
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class FactionUtils {
@@ -60,6 +60,10 @@ public class FactionUtils {
             }
             current++;
         }
+    }
+
+    public static int calculatePowerOffLand(Faction faction){
+        return faction.getChunks().size() * 100;
     }
 
     public static boolean playerExists(String name){
@@ -135,14 +139,11 @@ public class FactionUtils {
         instance.plugin.getChunkIdMap().put(c.getId(), c);
     }
 
-    private static void claimInRadius(String factionName, Player p, int radius){
+    private static int claimInRadius(String factionName, Player p, int radius){
+        int claimed = 0;
+
         int px = p.getLocation().getChunk().getX();
         int pz = p.getLocation().getChunk().getZ();
-
-        if (!instance.plugin.getNamesIdsMap().containsKey(factionName)){
-            Utils.msg(p, factionNoExistMsg);
-            return;
-        }
 
         short id = instance.plugin.getNamesIdsMap().get(factionName);
         Faction fac = instance.plugin.getIdsFactionsMap().get(id);
@@ -151,24 +152,48 @@ public class FactionUtils {
         for (int x = -radius; x <= -radius; x++){
             for (int z = -radius; z <= radius; z++){
                 FastChunk c = new FastChunk((short) (px+x), (short) (pz+z), factionId);
+
+                if (instance.plugin.getChunkIdMap().containsKey(c.getId())){
+                    continue;
+                }
+
                 fac.getChunks().add(c);
                 instance.plugin.getChunkIdMap().put(c.getId(), c);
+                claimed++;
             }
         }
+        return claimed;
     }
 
-    public static void radiusClaim(boolean async, String factionName, Player p, int radius){
+    public static Faction getPlayersFaction(Player p){
+        String uuid = p.getUniqueId().toString();
+
+        for (short id : instance.plugin.getIdsFactionsMap().keySet()){
+            Faction fac = instance.plugin.getIdsFactionsMap().get(id);
+            if (fac.getMemberUUIDs().contains(uuid)){
+                return fac;
+            }
+        }
+
+        return null;
+    }
+
+    public static int radiusClaim(boolean async, String factionName, Player p, int radius){
+        final int[] claimed = {0};
+
         if (async){
             BukkitRunnable bukkitRunnable = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    claimInRadius(factionName, p, radius);
+                    claimed[0] = claimInRadius(factionName, p, radius);
                 }
             };
             bukkitRunnable.runTaskAsynchronously(instance.plugin);
         } else {
-            claimInRadius(factionName, p, radius);
+            claimed[0] = claimInRadius(factionName, p, radius);
         }
+
+        return claimed[0];
     }
 
     public static void removeFactionChunks(short id){
