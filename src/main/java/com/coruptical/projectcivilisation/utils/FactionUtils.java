@@ -4,6 +4,7 @@ import com.coruptical.projectcivilisation.ProjectCivilisation;
 import com.coruptical.projectcivilisation.models.Faction;
 import com.coruptical.projectcivilisation.models.FastChunk;
 import com.coruptical.projectcivilisation.models.StoredChunk;
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -62,17 +63,20 @@ public class FactionUtils {
         }
     }
 
-    public static int calculatePowerOffLand(Faction faction){
+    public static int calculatePowerOffLand(String factionName){
+        short id = instance.plugin.getNamesIdsMap().get(factionName);
+        Faction faction = instance.plugin.getIdsFactionsMap().get(id);
+
         return faction.getChunks().size() * 100;
     }
 
     public static boolean playerExists(String name){
-        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(name);
-
-        if (offlinePlayer.getPlayerProfile().getName() == null){
-            return false;
+        for (OfflinePlayer offlinePlayer : instance.plugin.getServer().getOfflinePlayers()){
+            if (offlinePlayer.getName().equalsIgnoreCase(name)){
+                return true;
+            }
         }
-        return true;
+        return false;
     }
 
     public static void setOwner(String factionName, String ownerName){
@@ -81,6 +85,7 @@ public class FactionUtils {
 
         OfflinePlayer owner = Bukkit.getOfflinePlayer(ownerName);
         String uuid = owner.getUniqueId().toString();
+
         fac.setOwnerUUID(uuid);
     }
     public static void setDescription(String factionName, String description){
@@ -93,6 +98,7 @@ public class FactionUtils {
     public static void setPower(String factionName, int power){
         short id = instance.plugin.getNamesIdsMap().get(factionName);
         Faction fac = instance.plugin.getIdsFactionsMap().get(id);
+        fac.setPower(power);
     }
 
     public static void setName(String factionName, String newName){
@@ -100,14 +106,29 @@ public class FactionUtils {
         Faction fac = instance.plugin.getIdsFactionsMap().get(id);
 
         fac.setName(newName);
+
+        // Remove the old name from names ids map and replace with new one.
+        instance.plugin.getNamesIdsMap().remove(factionName);
+        instance.plugin.getNamesIdsMap().put(newName, id);
+    }
+
+    public static OfflinePlayer getOfflinePlayer(String name){
+        for (OfflinePlayer offlinePlayer : instance.plugin.getServer().getOfflinePlayers()){
+            if (offlinePlayer.getName().equalsIgnoreCase(name)){
+                return offlinePlayer;
+            }
+        }
+        return null;
     }
 
     public static void addMember(String factionName, String memberName){
         short id = instance.plugin.getNamesIdsMap().get(factionName);
         Faction fac = instance.plugin.getIdsFactionsMap().get(id);
 
-        OfflinePlayer member = Bukkit.getOfflinePlayer(memberName);
+        OfflinePlayer member = getOfflinePlayer(memberName);
         String uuid = member.getUniqueId().toString();
+
+        // We need to add this to the array list without errors
         fac.getMemberUUIDs().add(uuid);
     }
 
@@ -245,6 +266,10 @@ public class FactionUtils {
     }
 
     public static String getNameFromID(short id){
-        return instance.plugin.getIdsFactionsMap().get(id).getName();
+        Faction fac = instance.plugin.getIdsFactionsMap().get(id);
+        if (fac == null){
+            return "";
+        }
+        return fac.getName();
     }
 }

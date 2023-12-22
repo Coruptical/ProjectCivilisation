@@ -1,6 +1,8 @@
 package com.coruptical.projectcivilisation.models;
 
-public class StoredChunk {
+import java.io.Serializable;
+
+public class StoredChunk implements Serializable {
     private short x;
     private short z;
 

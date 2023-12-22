@@ -1,5 +1,6 @@
 package com.coruptical.projectcivilisation.models;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -8,11 +9,11 @@ public class Faction {
     private String description;
     private Set<FastChunk> chunks;
     private String ownerUUID;
-    private List<String> memberUUIDs;
+    private ArrayList<String> memberUUIDs;
     private int power;
     private short factionID;
 
-    public Faction(String name, String description, Set<FastChunk> chunks, String ownerUUID, List<String> memberUUIDs, int power, short factionID) {
+    public Faction(String name, String description, Set<FastChunk> chunks, String ownerUUID, ArrayList<String> memberUUIDs, int power, short factionID) {
         this.name = name;
         this.description = description;
         this.chunks = chunks;
@@ -54,11 +55,11 @@ public class Faction {
         this.ownerUUID = ownerUUID;
     }
 
-    public List<String> getMemberUUIDs() {
+    public ArrayList<String> getMemberUUIDs() {
         return memberUUIDs;
     }
 
-    public void setMemberUUIDs(List<String> memberUUIDs) {
+    public void setMemberUUIDs(ArrayList<String> memberUUIDs) {
         this.memberUUIDs = memberUUIDs;
     }
 

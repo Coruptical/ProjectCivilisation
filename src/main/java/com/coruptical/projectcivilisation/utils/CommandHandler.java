@@ -65,6 +65,12 @@ public class CommandHandler{
             FactionUtils.setDescription(factionName, value);
             Utils.msg(player, plugin.getPrefix() + "&aSuccessfully set description to: &f" + value);
         } else if (arg1.equalsIgnoreCase("set-power")) {
+            if (value.equalsIgnoreCase("default")){
+                FactionUtils.setPower(factionName, FactionUtils.calculatePowerOffLand(factionName));
+                Utils.msg(player, plugin.getPrefix() + "&aSuccessfully set power to default.");
+                return;
+            }
+
             try {
                 int parsedPower = Integer.parseInt(value);
                 FactionUtils.setPower(factionName, parsedPower);

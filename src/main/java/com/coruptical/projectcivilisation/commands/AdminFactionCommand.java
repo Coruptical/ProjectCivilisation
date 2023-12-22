@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AdminFactionCommand implements CommandExecutor, TabCompleter {
@@ -32,7 +33,31 @@ public class AdminFactionCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
-        return null;
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
+        List<String> list = new ArrayList<>();
+        if (args.length == 0) return list;
+        if (args.length == 1 && args[0].isEmpty()){
+            list.add("make");
+            list.add("delete");
+            list.add("list");
+        }
+
+        if (args.length == 1 && !args[0].isEmpty()){
+            if("make".startsWith(args[0])) list.add("make");
+            if("delete".startsWith(args[0])) list.add("delete");
+            if("list".startsWith(args[0])) list.add("list");
+        }
+
+        if (args.length == 2 && args[0].equalsIgnoreCase("delete")){
+            if (args[1].isEmpty()){
+                list.addAll(plugin.getNamesIdsMap().keySet());
+            }else {
+                for (String name : plugin.getNamesIdsMap().keySet()){
+                    if (name.toLowerCase().startsWith(args[1].toLowerCase())) list.add(name);
+                }
+            }
+        }
+
+        return list;
     }
 }

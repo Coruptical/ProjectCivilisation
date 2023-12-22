@@ -9,6 +9,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -212,10 +213,12 @@ public class DatabaseHandler {
     }
 
     public void updateAllFactions(){
+        openConnection();
         for (short id : plugin.getIdsFactionsMap().keySet()){
             Faction fac = plugin.getIdsFactionsMap().get(id);
             updateFaction(fac);
         }
+        closeConnection();
     }
 
     public void loadFactions(){
@@ -236,7 +239,9 @@ public class DatabaseHandler {
                 String memberUUIDString = resultSet.getString(6);
                 byte[] chunkDataBytes = resultSet.getBytes(7);
 
-                List<String> memberUUIDs = Arrays.asList(memberUUIDString.split(","));
+                String[] uuids = memberUUIDString.split(",");
+                ArrayList<String> memberUUIDs = new ArrayList<>(Arrays.asList(uuids));
+
                 Faction faction = new Faction(name,
                         description,
                         Utils.getChunksFromStored(id, chunkDataBytes),
